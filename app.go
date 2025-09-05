@@ -1,19 +1,41 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-rest-api/models"
 )
 
 func main() {
 	server := gin.Default()
 
-	server.GET("/", handler)
+	server.GET("/events", getEvents)
+	server.POST("/events", createEvent)
 
 	server.Run(":8080")
 }
 
-func handler(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"message": "Hello World"})
+func getEvents(context *gin.Context) {
+	events := models.GetAllEvents()
+	context.JSON(http.StatusOK, events)
+}
+
+func createEvent(context *gin.Context) {
+	var event models.Event
+
+	err := context.ShouldBindJSON(&event)
+
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request"})
+		return
+	}
+
+	event.ID = 1
+	event.UserID = 1
+	event.Save()
+
+	context.JSON(http.StatusCreated, gin.H{"message": "Created Successfully!", "event": event})
 }
