@@ -10,7 +10,7 @@ This is a small REST API built in Go to practice core backend concepts: routing 
 
 ### Project Structure
 ```
-app.go                  # Server entrypoint
+main.go                 # Server entrypoint
 database/db.go          # DB init and schema creation
 middlewares/auth.go     # JWT auth middleware
 models/                 # Data models (User, Event)
@@ -38,28 +38,28 @@ The API listens on `http://localhost:8080` and creates `api.db` on first run.
 
 Note: In this practice project the token is sent as a raw string in `Authorization` (no `Bearer` prefix).
 
-### Endpoints
+### Endpoints (all prefixed with `/api/v1`)
 
 Public:
-- `POST /signup` — Create user
+- `POST /api/v1/signup` — Create user
   - Body:
   ```json
   { "email": "you@example.com", "password": "yourPassword" }
   ```
   - 201 on success
 
-- `POST /login` — Get JWT
+- `POST /api/v1/login` — Get JWT
   - Body:
   ```json
   { "email": "you@example.com", "password": "yourPassword" }
   ```
   - 200 on success → `{ token: string }`
 
-- `GET /events` — List all events
-- `GET /events/:id` — Get a single event by id
+- `GET /api/v1/events` — List all events
+- `GET /api/v1/events/:id` — Get a single event by id
 
 Protected (requires `Authorization: <token>`):
-- `POST /events` — Create event
+- `POST /api/v1/events` — Create event
   - Body:
   ```json
   {
@@ -69,21 +69,23 @@ Protected (requires `Authorization: <token>`):
     "dateTime": "2025-09-10T18:00:00Z"
   }
   ```
-- `PUT /events/:id` — Update own event (name, description, location, dateTime)
-- `DELETE /events/:id` — Delete own event
+- `PUT /api/v1/events/:id` — Update own event (name, description, location, dateTime)
+- `DELETE /api/v1/events/:id` — Delete own event
+- `POST /api/v1/events/:id/register` — Register current user to an event
+- `DELETE /api/v1/events/:id/register` — Cancel current user's registration
 
 ### cURL Examples
 
 Sign up:
 ```bash
-curl -X POST http://localhost:8080/signup \
+curl -X POST http://localhost:8080/api/v1/signup \
   -H 'Content-Type: application/json' \
   -d '{"email":"you@example.com","password":"secret"}'
 ```
 
 Log in (get token):
 ```bash
-TOKEN=$(curl -s -X POST http://localhost:8080/login \
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/login \
   -H 'Content-Type: application/json' \
   -d '{"email":"you@example.com","password":"secret"}' | jq -r .token)
 echo "$TOKEN"
@@ -91,7 +93,7 @@ echo "$TOKEN"
 
 Create event:
 ```bash
-curl -X POST http://localhost:8080/events \
+curl -X POST http://localhost:8080/api/v1/events \
   -H "Content-Type: application/json" \
   -H "Authorization: $TOKEN" \
   -d '{
@@ -104,7 +106,19 @@ curl -X POST http://localhost:8080/events \
 
 List events:
 ```bash
-curl http://localhost:8080/events
+curl http://localhost:8080/api/v1/events
+```
+
+Register for event:
+```bash
+curl -X POST http://localhost:8080/api/v1/events/1/register \
+  -H "Authorization: $TOKEN"
+```
+
+Cancel registration:
+```bash
+curl -X DELETE http://localhost:8080/api/v1/events/1/register \
+  -H "Authorization: $TOKEN"
 ```
 
 ### Notes and Limitations (since this is for practice)
