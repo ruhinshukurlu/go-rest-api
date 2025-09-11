@@ -8,6 +8,17 @@ import (
 	"github.com/go-rest-api/utils"
 )
 
+// signup godoc
+// @Summary Sign up a new user
+// @Description Create a new user account
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User payload"
+// @Success 201 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /signup [post]
 func signup(context *gin.Context) {
 
 	var user models.User
@@ -28,6 +39,18 @@ func signup(context *gin.Context) {
 	context.JSON(http.StatusCreated, gin.H{"message": "user created successfully!"})
 }
 
+// login godoc
+// @Summary Log in a user
+// @Description Authenticate user and return a JWT token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param credentials body models.User true "User credentials"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /login [post]
 func login(context *gin.Context) {
 	var user models.User
 
