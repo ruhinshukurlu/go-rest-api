@@ -2,18 +2,32 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 var DB *sql.DB
 
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "admin"
+	password = "admin123"
+	dbname   = "go-db"
+)
+
 func InitDB() {
-	var err error
-	DB, err = sql.Open("sqlite3", "api.db")
+
+	DB, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname))
 
 	if err != nil {
 		panic("Could not connect to database.")
+	}
+
+	err = DB.Ping()
+	if err != nil {
+		panic("Could not ping to database.")
 	}
 
 	DB.SetMaxOpenConns(10)
@@ -26,7 +40,7 @@ func InitDB() {
 func createTables() {
 	createUserTable := `
 		CREATE TABLE IF NOT EXISTS users (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			id SERIAL PRIMARY KEY,
 			email TEXT NOT NULL UNIQUE,
 			password TEXT NOT NULL
 		)
@@ -39,11 +53,11 @@ func createTables() {
 
 	createEventTables := `
 		CREATE TABLE IF NOT EXISTS events (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			id SERIAL PRIMARY KEY,
 			name TEXT NOT NULL,
 			description TEXT NOT NULL,
 			location TEXT NOT NULL,
-			dateTime DATETIME NOT NULL,
+			dateTime TIMESTAMP NOT NULL,
 			user_id INTEGER,
 			FOREIGN KEY(user_id) REFERENCES users(id)
 		)
@@ -57,7 +71,7 @@ func createTables() {
 
 	createRegistrationsTable := `
 		CREATE TABLE IF NOT EXISTS registrations(
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			id SERIAL PRIMARY KEY,
 			user_id INTEGER,
 			event_id INTEGER,
 			FOREIGN KEY(user_id) REFERENCES users(id),
