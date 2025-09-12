@@ -18,8 +18,8 @@ const (
 )
 
 func InitDB() {
-
-	DB, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname))
+	var err error
+	DB, err = sql.Open("postgres", fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname))
 
 	if err != nil {
 		panic("Could not connect to database.")

@@ -7,13 +7,16 @@ import (
 	"github.com/go-rest-api/routes"
 )
 
-// @title Go Rest API
+// @title Your API
 // @version 1.0
-// @description This is Go Rest API for practice
+// @description This is your API description
 // @host localhost:8080
 // @BasePath /api/v1
 // @schemes http
+// @securityDefinitions.apikey BearerAuth
+// @in header
 // @name Authorization
+// @description Type "Bearer" followed by a space and JWT token. Example: "Bearer {token}"
 func main() {
 	server := gin.Default()
 	routes.RegisterRoutes(server)

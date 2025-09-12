@@ -4,8 +4,8 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "This is Go Rest API for practice",
-        "title": "Go Rest API",
+        "description": "This is your API description",
+        "title": "Your API",
         "contact": {},
         "version": "1.0"
     },
@@ -549,6 +549,14 @@
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token. Example: \"Bearer {token}\"",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

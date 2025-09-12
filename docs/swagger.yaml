@@ -30,8 +30,8 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: This is Go Rest API for practice
-  title: Go Rest API
+  description: This is your API description
+  title: Your API
   version: "1.0"
 paths:
   /events:
@@ -359,4 +359,11 @@ paths:
       - auth
 schemes:
 - http
+securityDefinitions:
+  BearerAuth:
+    description: 'Type "Bearer" followed by a space and JWT token. Example: "Bearer
+      {token}"'
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

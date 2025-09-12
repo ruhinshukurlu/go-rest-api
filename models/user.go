@@ -14,15 +14,10 @@ type User struct {
 }
 
 func (u User) Save() error {
-	query := "INSERT INTO users(email, password) VALUES (?, ?)"
-
-	stmt, err := database.DB.Prepare(query)
-
-	if err != nil {
-		return err
-	}
-
-	defer stmt.Close()
+	query := `
+		INSERT INTO users(email, password) 
+		VALUES ($1, $2) 
+		RETURNING id`
 
 	hashedPass, err := utils.HashPassword(u.Password)
 
@@ -30,20 +25,17 @@ func (u User) Save() error {
 		return err
 	}
 
-	result, err := stmt.Exec(u.Email, hashedPass)
+	err = database.DB.QueryRow(query, u.Email, hashedPass).Scan(&u.ID)
 
 	if err != nil {
 		return err
 	}
 
-	userId, err := result.LastInsertId()
-	u.ID = userId
-
-	return err
+	return nil
 }
 
 func (u *User) ValidateCredentials() error {
-	query := "SELECT id, password from users WHERE email = ?"
+	query := "SELECT id, password from users WHERE email = $1"
 
 	row := database.DB.QueryRow(query, u.Email)
 
